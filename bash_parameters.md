@@ -70,3 +70,69 @@ gedit &
 sleep 5
 kill $!
 ```
+
+
+If you work with multiple background tasks, save the$! value in temporary variables. The $$ parameter returns the process identifier of the current Bash process. Inside sub-shells, it always returns the parent Bash process’s identifier. Some old bash scripts use $$ for unique temporary file creation, but it creates predictable temporary files and makes a vulnerability for attackers, so use the mktemp command for creating secure temporary files.
+
+## Pre-Defined Variables That Help Us Debug Bash Scripts Productively
+
+Many programmers use the echo command to debug Bash scripts as they use console.log in JavaScript debugging. This approach is undoubtedly more comfortable and fast for developing simple Bash scripts. But, if you process more data and execute many commands in a particular Bash script, this approach becomes time-consuming.
+
+As many DevOps engineers know, we can execute the Bash interpreter process with the -x or -xv (verbose) flags to display the current command and code snippet, respectively. By default, Bash will show the + prefix with the present command string, as shown in the following preview:
+
+```bash
+#!/bin/bash -x
+```
+
+```bash
+#!/bin/bash
+green='tput setaf 2'
+reset='tput sgr0'
+PS4='$($green)Line: $LINENO -> $($reset)'
+set -x
+a=10
+b=15
+echo "a = $a"
+echo "b = $b"
+```
+
+## Splitting strings like pythoin with the IFS variable
+
+We often have to work with string-splitting tasks in Bash scripts. For example, in some scenarios, we will have to process CSV files by splitting each line with the comma character. Also, sometimes, we need to capture keyboard inputs with the read command according to an input mask. We can handle these scenarios easily with IFS (Internal Field Separator). IFS is an internal variable that instructs Bash separate word segments from strings.
+
+
+The default value of the IFS variable is <space><tab><newline>, but you can edit it according to your needs and reset it back to the original. Let’s begin with a simple example. Assume that you want to ask the user to enter a serial number in theNN-NNNN format and save both masked segments in separate variables. By default, the read command handles inputs based on the default IFS, but we can indeed modify it as follows:
+
+
+```bash
+
+#!/bin/bash
+IFS=-
+read -p "Serial number (i.e., 12-2222): " seg1 seg2
+echo "Segment 1: $seg1"
+echo "Segment 2: $seg2"
+
+```
+
+## Retrieving Bash History in Terminal to boost productivity
+
+Earlier, we discussed writing Shell scripts productively with some built-in pre-defined parameters. Let’s discuss some Bash notations that help work with the terminal faster. As you already know, Bash stores the command history in the ~/.bash_history file, and we can browse history records with the history command.
+
+Bash offers some shortcuts to access the history records. For example, you can use the following notation to access previously entered commands:
+
+```bash
+!-1   # Previous command. Alias: !!
+!-2   # Second command in history records
+!-3   # Third command in history records
+```
+
+
+These are not built-in parameters — but a special syntax known as the history expansion. You can configure the history file with HISTSIZE, HISTTIMEFORMAT — like variables.
+
+The $_ parameter is also helpful to get the last option of the previous command, so we can skip re-typing lengthy command options as follows:
+
+```bash
+touch long_file_name.sh
+chmod +x $_
+
+```
